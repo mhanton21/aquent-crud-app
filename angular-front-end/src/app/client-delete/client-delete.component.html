@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Delete Client</h2>
+<mat-dialog-content>
+  <p>Are you sure you want to delete {{data.client.companyName}}?</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button [mat-dialog-close]="'deleted'" cdkFocusInitial (click)="onConfirmDelete()">Delete</button>
+</mat-dialog-actions>

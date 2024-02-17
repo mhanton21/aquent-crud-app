@@ -8,7 +8,7 @@ import {Person} from "./person";
 })
 export class PersonService {
 
-  private baseUrl = "http://localhost:8081/person";
+  private personEndpoint = "http://localhost:8081/person";
 
   constructor(
     private router: Router
@@ -16,8 +16,7 @@ export class PersonService {
 
   async listPeople(): Promise<Person[]> {
     try {
-      const endpoint = this.baseUrl + "/list"
-      const response = await axios.get<Person[]>(endpoint);
+      const response = await axios.get<Person[]>(this.personEndpoint);
       return response.data;
     }
     catch (error) {
@@ -28,7 +27,7 @@ export class PersonService {
 
   async readPerson(personId: number) {
     try {
-      const url = this.baseUrl + "/" + personId;
+      const url = this.personEndpoint + "/" + personId;
       const response = await axios.get<Person>(url);
       return response.data;
     }
@@ -39,7 +38,7 @@ export class PersonService {
   }
 
   deletePerson(personId: number) {
-    const url = this.baseUrl + "/" + personId;
+    const url = this.personEndpoint + "/" + personId;
     axios.delete(url)
       .then(response => {
         if (response.status == 200) {
@@ -55,8 +54,7 @@ export class PersonService {
   }
 
   editPerson(person: any): Promise<any> {
-    const url = this.baseUrl;
-    return axios.put(url,person)
+    return axios.put(this.personEndpoint,person)
       .then(response => {
         console.log('Person edited: ',response.data);
         this.navigateToListPeople();
@@ -73,7 +71,7 @@ export class PersonService {
   }
 
   createPerson(person: any): Promise<any> {
-    return axios.post(this.baseUrl, person)
+    return axios.post(this.personEndpoint, person)
       .then(response => {
         console.log('Person created: ',response.data);
         this.navigateToListPeople();
@@ -95,6 +93,6 @@ export class PersonService {
   }
 
   navigateToListPeople() {
-    this.router.navigate(['/person/list']);
+    this.router.navigate(['/person']);
   }
 }

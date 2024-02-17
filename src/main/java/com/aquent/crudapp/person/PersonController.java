@@ -1,12 +1,9 @@
 package com.aquent.crudapp.person;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Controller for handling basic person management operations.
@@ -27,7 +24,7 @@ public class PersonController {
      *
      * @return the current list of people
      */
-    @GetMapping(value = "list")
+    @GetMapping(value = "")
     public List<Person> list() {
         return personService.listPeople();
     }

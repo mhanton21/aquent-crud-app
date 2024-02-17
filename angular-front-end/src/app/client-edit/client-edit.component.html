@@ -1,0 +1,64 @@
+<h1>{{ title }}</h1>
+
+<div *ngIf="errors.length > 0">
+  <p>Please correct the following errors in your submission:</p>
+  <ul>
+    <li *ngFor="let error of errors">{{ error }}</li>
+  </ul>
+</div>
+
+<form [formGroup]="clientForm" *ngIf="clientForm" (ngSubmit)="onSubmit()">
+
+  <input type="hidden" formControlName="clientId" id="clientId" />
+
+  <label for="companyName">Company Name:</label>
+  <input type="text" formControlName="companyName" id="companyName" />
+  <div *ngIf="clientForm.get('companyName')?.invalid">
+    Company name is required with maximum length of 50.
+  </div>
+  <br/>
+
+  <label for="websiteUri">Website:</label>
+  <input type="text" formControlName="websiteUri" id="websiteUri" />
+  <div *ngIf="clientForm.get('websiteUri')?.invalid">
+    Website is required with maximum length of 50.
+  </div>
+  <br/>
+
+  <label for="phoneNumber">Phone Number:</label>
+  <input type="text" formControlName="phoneNumber" id="phoneNumber" />
+  <div *ngIf="clientForm.get('phoneNumber')?.invalid">
+    Valid phone number is required with maximum length of 20.
+  </div>
+  <br/>
+
+  <label for="streetAddress">Street Address:</label>
+  <input type="text" formControlName="streetAddress" id="streetAddress" />
+  <div *ngIf="clientForm.get('streetAddress')?.invalid">
+    Street address is required with maximum length of 50.
+  </div>
+  <br/>
+
+  <label for="city">City:</label>
+  <input type="text" formControlName="city" id="city" />
+  <div *ngIf="clientForm.get('city')?.invalid">
+    City is required with maximum length of 50.
+  </div>
+  <br/>
+
+  <label for="state">State:</label>
+  <input type="text" formControlName="state" id="state" />
+  <div *ngIf="clientForm.get('state')?.invalid">
+    Valid state abbreviation is required.
+  </div>
+  <br/>
+
+  <label for="zipCode">Zip Code:</label>
+  <input type="text" formControlName="zipCode" id="zipCode" />
+  <div *ngIf="clientForm.get('zipCode')?.invalid">
+    Valid 5-digit zip code is required.
+  </div>
+  <br/>
+
+  <button type="submit" [disabled]="clientForm.invalid">Submit</button>
+</form>
