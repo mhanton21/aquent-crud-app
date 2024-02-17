@@ -7,4 +7,5 @@ export interface Client {
   city: string;
   state: string;
   zipCode: string;
+  contactIds: number[];
 }

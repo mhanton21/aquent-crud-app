@@ -7,4 +7,5 @@ export interface Person {
   city: string;
   state: string;
   zipCode: string;
+  clientId: number;
 }

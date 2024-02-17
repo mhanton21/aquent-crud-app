@@ -1,4 +1,4 @@
-<h1>Client Listing</h1>
+<h2>Client Listing</h2>
 <p><button (click)="editClient()">Create New Client</button></p>
 
 <mat-table *ngIf="clients && clients.length > 0" [dataSource]="clients">
@@ -16,6 +16,15 @@
   <ng-container matColumnDef="phoneNumber">
     <mat-header-cell *matHeaderCellDef> Phone Number </mat-header-cell>
     <mat-cell *matCellDef="let client"> {{client.phoneNumber}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="contacts">
+    <mat-header-cell *matHeaderCellDef> Contacts </mat-header-cell>
+    <mat-cell *matCellDef="let client">
+      <div *ngFor="let contactId of client.contactIds">
+        {{ persons.get(contactId) }}<br/>
+      </div>
+    </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="actions">

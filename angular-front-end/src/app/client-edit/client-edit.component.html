@@ -1,4 +1,4 @@
-<h1>{{ title }}</h1>
+<h2>{{ title }}</h2>
 
 <div *ngIf="errors.length > 0">
   <p>Please correct the following errors in your submission:</p>
@@ -60,5 +60,15 @@
   </div>
   <br/>
 
+  <label for="contactIds">Contacts:</label>
+  <br/>
+  <select multiple formControlName="contactIds" id="contactIds">
+    <option *ngFor="let person of persons" [value]="person.personId">
+      {{ person.firstName }} {{ person.lastName }}
+    </option>
+  </select>
+  <br/>
+
+  <br/>
   <button type="submit" [disabled]="clientForm.invalid">Submit</button>
 </form>

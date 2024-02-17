@@ -13,6 +13,7 @@ import {Client} from "../client";
 import {ClientService} from "../client.service";
 import {ClientDeleteComponent} from "../client-delete/client-delete.component";
 import {MatDialog} from "@angular/material/dialog";
+import {PersonService} from "../person.service";
 
 @Component({
   selector: 'app-client-list',
@@ -36,20 +37,34 @@ import {MatDialog} from "@angular/material/dialog";
 export class ClientListComponent implements OnInit {
 
   clients: Client[] = [];
-  columnsToDisplay: string[] = ['companyName','websiteUri','phoneNumber','actions'];
+  persons: Map<number, string> = new Map();
+  columnsToDisplay: string[] = ['companyName', 'websiteUri', 'phoneNumber', 'contacts', 'actions'];
 
   constructor(
     private dialog: MatDialog,
-    private clientService: ClientService
+    private clientService: ClientService,
+    private personService: PersonService
   ) {}
 
   ngOnInit() {
     this.listClients();
+    this.listPeople();
   }
 
   async listClients() {
     try {
       this.clients = await this.clientService.listClients();
+    }
+    catch (error) {
+      console.error(error);
+    }
+  }
+
+  async listPeople() {
+    try {
+      const personList = await this.personService.listPeople();
+      this.persons = new Map(personList.map(person =>
+        [person.personId, `${person.firstName} ${person.lastName}`]));
     }
     catch (error) {
       console.error(error);

@@ -1,4 +1,4 @@
-<h1>{{ title }}</h1>
+<h2>{{ title }}</h2>
 
 <div *ngIf="errors.length > 0">
   <p>Please correct the following errors in your submission:</p>
@@ -58,6 +58,15 @@
   <div *ngIf="personForm.get('zipCode')?.invalid">
     Valid 5-digit zip code is required.
   </div>
+  <br/>
+
+  <label for="clientId">Client:</label>
+  <select formControlName="clientId" id="clientId">
+    <option value=""></option>
+    <option *ngFor="let client of clients" [value]="client.clientId">
+      {{ client.companyName }}
+    </option>
+  </select>
   <br/>
 
   <button type="submit" [disabled]="personForm.invalid">Submit</button>

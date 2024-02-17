@@ -12,20 +12,28 @@ Client will be similar to Person, so start with refactoring to reduce work later
 Implement Client
 * Essentially copy and adjust sources for Person
 
+Implement Client-Person relationship
+* Person has "associated client" and Client has "associated contacts". So client can have any number of contacts (including 0) and person can only have 1.
+* 2 database options to define the relationship
+  * Add a client column to the person table, foreign key to client.client_id
+  * Add a new table contact, mapping between person_id and client_id
+  * Mapping table has the most flexibility, so will go forward with that.
+* On Person List, add column to display client
+* On Person Edit/Create, add dropdown field to select client.
+* On Client List, add column to display contacts
+* On Client Edit/Create, add multi-select field for contacts
+  * Since person can only be contact for 1 client, need to filter options. 
+  * GET /person retrieves the person list, so could add query parameters to adjust the query.
+  * ?clientId=<id> returns persons associated with the client and those without a client
+  * ?newClient=true returns persons that don't have a client
+
 # TODO
 
+* Client list - contacts aren't displaying on multiple lines
 * Make sure code style is consistent across all sources
 * Run code analysis
 * Phone number: strip out dashes when filing to database, display to user with dashes
 * Test all error handling
-
-## Story #1
-
-* Clients can have zero, one, or multiple associated contacts.
-* When editing a person, the user should be able to choose the associated client.
-* When viewing a person, the associated client should be shown.
-* When viewing a client, the associated contacts should be shown.
-* When editing a client, the user should be able to add or remove associated contacts.
 
 ## Story #2
 

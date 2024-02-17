@@ -19,3 +19,10 @@ CREATE TABLE client (
     state varchar(2) NOT NULL,
     zip_code varchar(5) NOT NULL
 );
+
+CREATE TABLE contact (
+    client_id integer,
+    person_id integer,
+    CONSTRAINT fk_client_id FOREIGN KEY (client_id) REFERENCES client (client_id) ON DELETE CASCADE,
+    CONSTRAINT fk_person_id FOREIGN KEY (person_id) REFERENCES person (person_id) ON DELETE CASCADE
+);

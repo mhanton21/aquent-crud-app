@@ -2,6 +2,8 @@ package com.aquent.crudapp.client;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The client entity corresponding to the "client" table in the database.
@@ -37,6 +39,8 @@ public class Client {
     @NotNull
     @Size(min = 5, max = 5, message = "Zip code is required with length 5")
     private String zipCode;
+
+    private ArrayList<Integer> contactIds = new ArrayList<Integer>();
 
     public Integer getClientId() {
         return clientId;
@@ -100,5 +104,13 @@ public class Client {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public ArrayList<Integer> getContactIds() {
+        return contactIds;
+    }
+
+    public void addContactIds(List<Integer> contactIds) {
+        this.contactIds.addAll(contactIds);
     }
 }

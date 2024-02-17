@@ -3,6 +3,8 @@ import {CommonModule} from "@angular/common";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute} from "@angular/router";
 import {PersonService} from "../person.service";
+import {Client} from "../client";
+import {ClientService} from "../client.service";
 
 @Component({
   selector: 'app-person-edit',
@@ -17,12 +19,14 @@ export class PersonEditComponent implements OnInit {
   title: string = "";
   personForm: FormGroup = new FormGroup<any>({});
   person: any;
+  clients: Client[] = [];
   errors: string[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private personService: PersonService
+    private personService: PersonService,
+    private clientService: ClientService
   ) {}
 
   ngOnInit() {
@@ -38,12 +42,15 @@ export class PersonEditComponent implements OnInit {
       streetAddress: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50)]],
       city: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50)]],
       state: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
-      zipCode: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(5)]]
+      zipCode: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(5)]],
+      clientId: ['']
     });
 
     if (this.isEditMode) {
       this.readPerson(Number(personId));
     }
+
+    this.listClients();
   }
 
   async readPerson(personId: number) {
@@ -57,8 +64,18 @@ export class PersonEditComponent implements OnInit {
         streetAddress: this.person.streetAddress,
         city: this.person.city,
         state: this.person.state,
-        zipCode: this.person.zipCode
+        zipCode: this.person.zipCode,
+        clientId: this.person.clientId || ""
       });
+    }
+    catch (error) {
+      console.error(error);
+    }
+  }
+
+  async listClients() {
+    try {
+      this.clients = await this.clientService.listClients();
     }
     catch (error) {
       console.error(error);

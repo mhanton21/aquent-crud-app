@@ -14,9 +14,11 @@ export class PersonService {
     private router: Router
   ) { }
 
-  async listPeople(): Promise<Person[]> {
+  async listPeople(queryParams?: { [key: string]: any }): Promise<Person[]> {
     try {
-      const response = await axios.get<Person[]>(this.personEndpoint);
+      const queryString = new URLSearchParams(queryParams).toString();
+      const url = `${this.personEndpoint}${queryString ? '?' + queryString : ''}`;
+      const response = await axios.get<Person[]>(url);
       return response.data;
     }
     catch (error) {

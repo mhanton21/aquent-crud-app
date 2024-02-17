@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import {PersonService} from "./person.service";
+import {ClientService} from "./client.service";
 
 @Component({
   selector: 'app-root',
@@ -10,5 +12,18 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'angular-front-end';
+  title = 'Aquent CRUD App';
+
+  constructor(
+    private personService: PersonService,
+    private clientService: ClientService
+  ){}
+
+  navigateToListPeople() {
+    this.personService.navigateToListPeople();
+  }
+
+  navigateToListClients() {
+    this.clientService.navigateToListClients();
+  }
 }

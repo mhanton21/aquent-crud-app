@@ -20,13 +20,24 @@ public class PersonController {
     }
 
     /**
-     * Returns data for the listing page.
+     * Returns data for person listing.
      *
+     * @param clientId (optional) the ID of the client to filter by
+     * @param newClient (optional) flag indicating whether to filter for new client
      * @return the current list of people
      */
     @GetMapping(value = "")
-    public List<Person> list() {
-        return personService.listPeople();
+    public List<Person> list(@RequestParam(value = "clientId", required = false) Integer clientId,
+                             @RequestParam(value = "newClient", defaultValue = "false") boolean newClient) {
+        if (newClient) {
+            return personService.listPeopleForNewClient();
+        }
+        else if (clientId != null) {
+            return personService.listPeopleForExistingClient(clientId);
+        }
+        else {
+            return personService.listPeople();
+        }
     }
 
     /**
