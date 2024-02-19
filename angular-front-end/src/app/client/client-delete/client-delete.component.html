@@ -1,0 +1,14 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title text-primary">Delete Client</h4>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete {{data.client.companyName}}?</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="onConfirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>

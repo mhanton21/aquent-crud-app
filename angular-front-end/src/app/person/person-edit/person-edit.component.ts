@@ -2,9 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute} from "@angular/router";
-import {PersonService} from "../person.service";
-import {Client} from "../client";
-import {ClientService} from "../client.service";
+import {PersonService} from "../../services/person.service";
+import {Client} from "../../client";
+import {ClientService} from "../../services/client.service";
+import * as customValidators from "../../validators";
+import {map} from "rxjs";
 
 @Component({
   selector: 'app-person-edit',
@@ -16,24 +18,26 @@ import {ClientService} from "../client.service";
 export class PersonEditComponent implements OnInit {
 
   isEditMode: boolean = false;
-  title: string = "";
+  isInvalidPage: boolean = false;
   personForm: FormGroup = new FormGroup<any>({});
   person: any;
   clients: Client[] = [];
   errors: string[] = [];
 
   constructor(
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     private personService: PersonService,
     private clientService: ClientService
   ) {}
 
   ngOnInit() {
-    const personId = this.route.snapshot.paramMap.get('id');
-    this.isEditMode = !!personId && personId != 'new';
-    this.title = this.isEditMode ? "Edit Person" : "Create Person";
+    this.initFormGroup();
+    this.initPerson();
+    this.listClients();
+  }
 
+  initFormGroup() {
     this.personForm = this.fb.group({
       personId: [''],
       firstName: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50)]],
@@ -41,35 +45,52 @@ export class PersonEditComponent implements OnInit {
       emailAddress: ['', [Validators.required, Validators.email, Validators.minLength(1), Validators.maxLength(50)]],
       streetAddress: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50)]],
       city: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50)]],
-      state: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
-      zipCode: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(5)]],
+      state: ['', [Validators.required, customValidators.stateValidator]],
+      zipCode: ['', [Validators.required, customValidators.zipCodeValidator]],
       clientId: ['']
     });
+  }
 
-    if (this.isEditMode) {
-      this.readPerson(Number(personId));
+  patchFormGroupValues() {
+    this.personForm.patchValue({
+      personId: this.person.personId,
+      firstName: this.person.firstName,
+      lastName: this.person.lastName,
+      emailAddress: this.person.emailAddress,
+      streetAddress: this.person.streetAddress,
+      city: this.person.city,
+      state: this.person.state,
+      zipCode: this.person.zipCode,
+      clientId: this.person.clientId || ""
+    });
+  }
+
+  initPerson() {
+    if (window.history.state.person) {
+      this.activatedRoute.paramMap.pipe(map(() => window.history.state))
+        .subscribe(result => {
+          this.person = result.person;
+          this.patchFormGroupValues();
+        });
+      this.isEditMode = true;
     }
-
-    this.listClients();
+    else {
+      const personId = this.activatedRoute.snapshot.paramMap.get('id');
+      this.isEditMode = !!personId && personId != 'new';
+      if (this.isEditMode) {
+        this.readPerson(Number(personId));
+      }
+    }
   }
 
   async readPerson(personId: number) {
     try {
       this.person = await this.personService.readPerson(personId);
-      this.personForm.patchValue({
-        personId: this.person.personId,
-        firstName: this.person.firstName,
-        lastName: this.person.lastName,
-        emailAddress: this.person.emailAddress,
-        streetAddress: this.person.streetAddress,
-        city: this.person.city,
-        state: this.person.state,
-        zipCode: this.person.zipCode,
-        clientId: this.person.clientId || ""
-      });
+      this.patchFormGroupValues();
     }
     catch (error) {
       console.error(error);
+      this.isInvalidPage = true;
     }
   }
 
@@ -99,5 +120,29 @@ export class PersonEditComponent implements OnInit {
           this.errors = error;
         });
     }
+  }
+
+  getPageTitle() {
+    if (this.isInvalidPage) {
+      return "Person Not Found";
+    }
+    else if (this.isEditMode) {
+      return "Edit Person";
+    }
+    else {
+      return "Create Person";
+    }
+  }
+
+  getClasses(formControlName: string) {
+    return { 'is-invalid': this.personForm.get(formControlName)?.invalid };
+  }
+
+  getErrorMessage(formControlName: string) {
+    const errors = this.personForm.get(formControlName)?.errors
+    if (errors == null) {
+      return '';
+    }
+    return customValidators.getErrorMessage(errors);
   }
 }

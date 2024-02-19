@@ -1,0 +1,92 @@
+<h2 class="text-primary text-center">{{ getPageTitle() }}</h2>
+
+<div *ngIf="isInvalidPage" class="alert alert-danger text-center">
+  Could not locate Person. Please check the ID.
+</div>
+
+<div *ngIf="errors.length > 0" class="alert alert-danger">
+  <p>Please correct the following errors in your submission:</p>
+  <ul>
+    <li *ngFor="let error of errors">{{ error }}</li>
+  </ul>
+</div>
+
+<form [formGroup]="personForm" *ngIf="personForm && !isInvalidPage" (ngSubmit)="onSubmit()"
+      class="form-group needs-validation">
+
+  <div class="form-floating">
+    <input type="text" class="form-control" formControlName="firstName" id="firstName"  placeholder="First Name"
+           [ngClass]="getClasses('firstName')"/>
+    <label for="firstName">First Name</label>
+    <div class="invalid-feedback">
+      {{getErrorMessage('firstName')}}
+    </div>
+  </div>
+
+  <div class="form-floating">
+    <input type="text" class="form-control" formControlName="lastName" id="lastName" placeholder="Last Name"
+           [ngClass]="getClasses('lastName')"/>
+    <label for="lastName">Last Name</label>
+    <div class="invalid-feedback">
+      {{getErrorMessage('lastName')}}
+    </div>
+  </div>
+
+  <div class="form-floating">
+    <input type="text" class="form-control" formControlName="emailAddress" id="emailAddress"
+           placeholder="Email Address" [ngClass]="getClasses('emailAddress')" />
+    <label for="emailAddress">Email Address</label>
+    <div class="invalid-feedback">
+      {{getErrorMessage('emailAddress')}}
+    </div>
+  </div>
+
+  <div class="form-floating">
+    <input type="text" class="form-control" formControlName="streetAddress" id="streetAddress"
+           placeholder="Street Address" [ngClass]="getClasses('streetAddress')"/>
+    <label for="streetAddress">Street Address</label>
+    <div class="invalid-feedback">
+      {{getErrorMessage('streetAddress')}}
+    </div>
+  </div>
+
+  <div class="form-floating">
+    <input type="text" class="form-control" formControlName="city" id="city" placeholder="City"
+           [ngClass]="getClasses('city')"/>
+    <label for="city">City</label>
+    <div class="invalid-feedback">
+      {{getErrorMessage('city')}}
+    </div>
+  </div>
+
+  <div class="form-floating">
+    <input type="text" class="form-control" formControlName="state" id="state" placeholder="State"
+           [ngClass]="getClasses('state')"/>
+    <label for="state">State</label>
+    <div class="invalid-feedback">
+      {{getErrorMessage('state')}}
+    </div>
+  </div>
+
+  <div class="form-floating">
+    <input type="text" class="form-control" formControlName="zipCode" id="zipCode" placeholder="Zip Code"
+           [ngClass]="getClasses('zipCode')"/>
+    <label for="zipCode">Zip Code</label>
+    <div class="invalid-feedback">
+      {{getErrorMessage('zipCode')}}
+    </div>
+  </div>
+
+  <div class="form-floating">
+    <select formControlName="clientId" id="clientId" class="form-select">
+      <option value=""></option>
+      <option *ngFor="let client of clients" [value]="client.clientId">
+        {{ client.companyName }}
+      </option>
+    </select>
+    <label for="clientId" class="form-label">Client</label>
+  </div>
+
+  <br/>
+  <button type="submit" [disabled]="personForm.invalid" class="btn btn-primary">Submit</button>
+</form>

@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import {PersonService} from "./person.service";
-import {ClientService} from "./client.service";
+import {PersonService} from "./services/person.service";
+import {ClientService} from "./services/client.service";
+
 
 @Component({
   selector: 'app-root',

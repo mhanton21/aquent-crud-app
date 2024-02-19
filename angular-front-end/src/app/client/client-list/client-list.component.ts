@@ -1,49 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CommonModule} from "@angular/common";
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable, MatTableModule
-} from "@angular/material/table";
-import {Client} from "../client";
-import {ClientService} from "../client.service";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {Client} from "../../client";
+import {ClientService} from "../../services/client.service";
 import {ClientDeleteComponent} from "../client-delete/client-delete.component";
-import {MatDialog} from "@angular/material/dialog";
-import {PersonService} from "../person.service";
+import {PersonService} from "../../services/person.service";
+import {PaginationService} from "../../services/pagination.service";
 
 @Component({
   selector: 'app-client-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatCell,
-    MatCellDef,
-    MatColumnDef,
-    MatHeaderCell,
-    MatHeaderRow,
-    MatHeaderRowDef,
-    MatRow,
-    MatRowDef,
-    MatTable,
-    MatTableModule
-  ],
+  imports: [CommonModule],
   templateUrl: './client-list.component.html',
-  styleUrl: './client-list.component.css'
+  styleUrl: './client-list.component.css',
+  providers: [PaginationService]
 })
 export class ClientListComponent implements OnInit {
 
   clients: Client[] = [];
   persons: Map<number, string> = new Map();
-  columnsToDisplay: string[] = ['companyName', 'websiteUri', 'phoneNumber', 'contacts', 'actions'];
 
   constructor(
-    private dialog: MatDialog,
+    private modalService: NgbModal,
     private clientService: ClientService,
-    private personService: PersonService
+    private personService: PersonService,
+    private pageService: PaginationService
   ) {}
 
   ngOnInit() {
@@ -54,6 +35,7 @@ export class ClientListComponent implements OnInit {
   async listClients() {
     try {
       this.clients = await this.clientService.listClients();
+      this.setPagination();
     }
     catch (error) {
       console.error(error);
@@ -72,17 +54,24 @@ export class ClientListComponent implements OnInit {
   }
 
   deleteClient(client: Client) {
-    const dialogRef = this.dialog.open(ClientDeleteComponent, {
-      data: {client}
-    });
-    dialogRef.afterClosed().subscribe(result => {
+    const dialogRef = this.modalService.open(ClientDeleteComponent);
+    dialogRef.componentInstance.data = {client};
+    dialogRef.result.then((result) => {
       if (result === 'deleted') {
         this.listClients();
       }
     });
   }
 
-  editClient(clientId?: number) {
-    this.clientService.navigateToEditClient(clientId);
+  editClient(client?: Client) {
+    this.clientService.navigateToEditClient(client);
+  }
+
+  setPagination() {
+    this.pageService.updateData(this.clients);
+  }
+
+  getPageData() {
+    return this.pageService.getPageData();
   }
 }

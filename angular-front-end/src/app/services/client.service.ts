@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Router} from "@angular/router";
 import axios from 'axios';
-import {Client} from "./client";
+import {Client} from "../client";
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +39,7 @@ export class ClientService {
 
   deleteClient(clientId: number) {
     const url = this.clientEndpoint + "/" + clientId;
-    axios.delete(url)
+    return axios.delete(url)
       .then(response => {
         if (response.status == 200) {
           console.log('Client deleted: ', response.data);
@@ -50,6 +50,7 @@ export class ClientService {
       })
       .catch(error => {
         console.error('Error deleting client: ', error);
+        throw error;
       });
   }
 
@@ -87,9 +88,13 @@ export class ClientService {
       });
   }
 
-  navigateToEditClient(clientId?: number) {
-    const path = clientId ? ['/client',clientId] : ['/client/new'];
-    this.router.navigate(path);
+  navigateToEditClient(client?: Client) {
+    if (client) {
+      this.router.navigate(['/client',client.clientId], {state: {client: client}});
+    }
+    else {
+      this.router.navigate(['/client/new']);
+    }
   }
 
   navigateToListClients() {

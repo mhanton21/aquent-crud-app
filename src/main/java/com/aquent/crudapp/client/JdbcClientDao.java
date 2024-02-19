@@ -32,8 +32,7 @@ public class JdbcClientDao implements ClientDao {
     public JdbcClientDao(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
-        try (FileInputStream fis = new FileInputStream("src/main/resources/sql.properties"))
-        {
+        try (FileInputStream fis = new FileInputStream("src/main/resources/sql.properties")) {
             this.sqlQueries.load(fis);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load SQL properties", e);
@@ -43,7 +42,9 @@ public class JdbcClientDao implements ClientDao {
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public List<Client> listClients() {
-        List<Client> clients = namedParameterJdbcTemplate.getJdbcOperations().query(sqlQueries.getProperty("sql.list_clients"), new ClientRowMapper());
+        List<Client> clients = namedParameterJdbcTemplate.getJdbcOperations().query(
+                sqlQueries.getProperty("sql.list_clients"),
+                new ClientRowMapper());
         for (Client client : clients) {
             readContacts(client);
         }
@@ -53,7 +54,10 @@ public class JdbcClientDao implements ClientDao {
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Client readClient(Integer clientId) {
-        Client client = namedParameterJdbcTemplate.queryForObject(sqlQueries.getProperty("sql.get_client"), Collections.singletonMap("clientId", clientId), new ClientRowMapper());
+        Client client = namedParameterJdbcTemplate.queryForObject(
+                sqlQueries.getProperty("sql.get_client"),
+                Collections.singletonMap("clientId", clientId),
+                new ClientRowMapper());
         if (client != null) {
             readContacts(client);
         }
@@ -63,14 +67,20 @@ public class JdbcClientDao implements ClientDao {
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void deleteClient(Integer clientId) {
-        namedParameterJdbcTemplate.update(sqlQueries.getProperty("sql.delete_client"), Collections.singletonMap("clientId", clientId));
+        namedParameterJdbcTemplate.update(
+                sqlQueries.getProperty("sql.delete_client"),
+                Collections.singletonMap("clientId", clientId));
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void updateClient(Client client) {
-        namedParameterJdbcTemplate.update(sqlQueries.getProperty("sql.update_client"), new BeanPropertySqlParameterSource(client));
-        namedParameterJdbcTemplate.update(sqlQueries.getProperty("sql.delete_client_contacts"), Collections.singletonMap("clientId", client.getClientId()));
+        namedParameterJdbcTemplate.update(
+                sqlQueries.getProperty("sql.update_client"),
+                new BeanPropertySqlParameterSource(client));
+        namedParameterJdbcTemplate.update(
+                sqlQueries.getProperty("sql.delete_client_contacts"),
+                Collections.singletonMap("clientId", client.getClientId()));
         createContacts(client);
     }
 
@@ -78,7 +88,10 @@ public class JdbcClientDao implements ClientDao {
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public Integer createClient(Client client) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        namedParameterJdbcTemplate.update(sqlQueries.getProperty("sql.insert_client"), new BeanPropertySqlParameterSource(client), keyHolder);
+        namedParameterJdbcTemplate.update(
+                sqlQueries.getProperty("sql.insert_client"),
+                new BeanPropertySqlParameterSource(client),
+                keyHolder);
         Integer clientId = keyHolder.getKey().intValue();
         client.setClientId(clientId);
         createContacts(client);
@@ -87,7 +100,10 @@ public class JdbcClientDao implements ClientDao {
 
     private void readContacts(Client client) {
         SqlParameterSource params = new MapSqlParameterSource("clientId", client.getClientId());
-        List<Integer> contacts = namedParameterJdbcTemplate.query(sqlQueries.getProperty("sql.list_client_contacts"), params, (rs, rowNum) -> rs.getInt("person_id"));
+        List<Integer> contacts = namedParameterJdbcTemplate.query(
+                sqlQueries.getProperty("sql.list_client_contacts"),
+                params,
+                (rs, rowNum) -> rs.getInt("person_id"));
         client.addContactIds(contacts);
     }
 
@@ -96,7 +112,9 @@ public class JdbcClientDao implements ClientDao {
            SqlParameterSource params = new MapSqlParameterSource()
                    .addValue("clientId", client.getClientId().intValue())
                    .addValue("personId", contactId.intValue());
-           namedParameterJdbcTemplate.update(sqlQueries.getProperty("sql.insert_contact"), params);
+           namedParameterJdbcTemplate.update(
+                   sqlQueries.getProperty("sql.insert_contact"),
+                   params);
        }
     }
 

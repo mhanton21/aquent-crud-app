@@ -1,8 +1,8 @@
 package com.aquent.crudapp.client;
 
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
+
+import org.springframework.stereotype.Repository;
 
 /**
  * Operations on the "client" table.

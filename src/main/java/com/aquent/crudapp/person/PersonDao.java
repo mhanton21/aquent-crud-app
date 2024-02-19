@@ -18,19 +18,6 @@ public interface PersonDao {
     List<Person> listPeople();
 
     /**
-     * Retrieves persons available for new client
-     * @return list of person records
-     */
-    List<Person> listPeopleForNewClient();
-
-    /**
-     * Retrieves persons available for existing client
-     * @param clientId ID of the client
-     * @return list of person records
-     */
-    List<Person> listPeopleForExistingClient(Integer clientId);
-
-    /**
      * Creates a new person record.
      *
      * @param person the values to save

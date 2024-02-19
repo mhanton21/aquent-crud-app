@@ -1,0 +1,41 @@
+<h2 class="text-primary text-center">Client Listing</h2>
+<br/>
+
+<div class="d-flex justify-content-center">
+  <button (click)="editClient()" class="btn btn-primary">Create New Client</button>
+</div>
+
+<ul class="pagination justify-content-center">
+</ul>
+
+<table *ngIf="this.clients && this.clients.length > 0" class="table table-bordered table-hover">
+  <thead class="table-primary">
+  <tr>
+    <th>Company Name</th>
+    <th>Website</th>
+    <th>Phone Number</th>
+    <th>Contacts</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let client of getPageData()">
+    <td>{{client.companyName}}</td>
+    <td>{{client.websiteUri}}</td>
+    <td>{{client.phoneNumber}}</td>
+    <td>
+      <div *ngFor="let contactId of client.contactIds">
+        {{ persons.get(contactId) }}<br/>
+      </div>
+    </td>
+    <td>
+      <div class="btn-group">
+        <button (click)="editClient(client)" class="btn btn-primary">Edit</button>
+        <button (click)="deleteClient(client)" class="btn btn-primary">Delete</button>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<p *ngIf="!this.clients || this.clients.length === 0">No results found.</p>

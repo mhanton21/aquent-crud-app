@@ -10,9 +10,7 @@ import java.util.Properties;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -32,8 +30,7 @@ public class JdbcPersonDao implements PersonDao {
     public JdbcPersonDao(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
-        try (FileInputStream fis = new FileInputStream("src/main/resources/sql.properties"))
-        {
+        try (FileInputStream fis = new FileInputStream("src/main/resources/sql.properties")) {
             this.sqlQueries.load(fis);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load SQL properties", e);
@@ -44,47 +41,42 @@ public class JdbcPersonDao implements PersonDao {
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public List<Person> listPeople() {
         return namedParameterJdbcTemplate.getJdbcOperations().query(
-                sqlQueries.getProperty("sql.list_people"), new PersonRowMapper());
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public List<Person> listPeopleForNewClient() {
-        return namedParameterJdbcTemplate.getJdbcOperations().query(
-                sqlQueries.getProperty("sql.list_people_new_client"), new PersonRowMapper());
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public List<Person> listPeopleForExistingClient(Integer clientId) {
-        SqlParameterSource params = new MapSqlParameterSource("clientId", clientId);
-        return namedParameterJdbcTemplate.query(
-                sqlQueries.getProperty("sql.list_people_existing_client"),
-                params,
+                sqlQueries.getProperty("sql.list_people"),
                 new PersonRowMapper());
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Person readPerson(Integer personId) {
-        return namedParameterJdbcTemplate.queryForObject(sqlQueries.getProperty("sql.get_person"), Collections.singletonMap("personId", personId), new PersonRowMapper());
+        return namedParameterJdbcTemplate.queryForObject(
+                sqlQueries.getProperty("sql.get_person"),
+                Collections.singletonMap("personId", personId),
+                new PersonRowMapper());
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void deletePerson(Integer personId) {
-        namedParameterJdbcTemplate.update(sqlQueries.getProperty("sql.delete_person"), Collections.singletonMap("personId", personId));
+        namedParameterJdbcTemplate.update(
+                sqlQueries.getProperty("sql.delete_person"),
+                Collections.singletonMap("personId", personId));
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void updatePerson(Person person) {
-        namedParameterJdbcTemplate.update(sqlQueries.getProperty("sql.update_person"), new BeanPropertySqlParameterSource(person));
+        namedParameterJdbcTemplate.update(
+                sqlQueries.getProperty("sql.update_person"),
+                new BeanPropertySqlParameterSource(person));
         if (person.getClientId() != null) {
-            namedParameterJdbcTemplate.update(sqlQueries.getProperty("sql.insert_contact"), new BeanPropertySqlParameterSource(person));
+            namedParameterJdbcTemplate.update(
+                    sqlQueries.getProperty("sql.insert_contact"),
+                    new BeanPropertySqlParameterSource(person));
         }
         else {
-            namedParameterJdbcTemplate.update(sqlQueries.getProperty("sql.delete_person_contact"), new BeanPropertySqlParameterSource(person));
+            namedParameterJdbcTemplate.update(
+                    sqlQueries.getProperty("sql.delete_person_contact"),
+                    new BeanPropertySqlParameterSource(person));
         }
     }
 
@@ -92,11 +84,16 @@ public class JdbcPersonDao implements PersonDao {
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public Integer createPerson(Person person) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        namedParameterJdbcTemplate.update(sqlQueries.getProperty("sql.insert_person"), new BeanPropertySqlParameterSource(person), keyHolder);
+        namedParameterJdbcTemplate.update(
+                sqlQueries.getProperty("sql.insert_person"),
+                new BeanPropertySqlParameterSource(person),
+                keyHolder);
         Integer personId = keyHolder.getKey().intValue();
         person.setPersonId(personId);
         if (person.getClientId() != null) {
-            namedParameterJdbcTemplate.update(sqlQueries.getProperty("sql.insert_contact"), new BeanPropertySqlParameterSource(person));
+            namedParameterJdbcTemplate.update(
+                    sqlQueries.getProperty("sql.insert_contact"),
+                    new BeanPropertySqlParameterSource(person));
         }
         return personId;
     }
@@ -117,7 +114,7 @@ public class JdbcPersonDao implements PersonDao {
             person.setCity(rs.getString("city"));
             person.setState(rs.getString("state"));
             person.setZipCode(rs.getString("zip_code"));
-            int clientId = rs.getInt("contact.client_id");
+            int clientId = rs.getInt("client_id");
             if (!rs.wasNull()) {
                 person.setClientId(clientId);
             }

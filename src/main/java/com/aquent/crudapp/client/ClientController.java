@@ -1,9 +1,9 @@
 package com.aquent.crudapp.client;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Controller for handling basic client management operations.
@@ -20,7 +20,7 @@ public class ClientController {
     }
 
     /**
-     * Returns data for the listing page.
+     * Returns data for client listing.
      *
      * @return the current list of clients
      */
@@ -44,7 +44,8 @@ public class ClientController {
             Integer clientId = clientService.createClient(client);
             Client createdClient = clientService.readClient(clientId);
             return ResponseEntity.ok(createdClient);
-        } else {
+        }
+		else {
             return ResponseEntity.badRequest().body(errors);
         }
     }
@@ -65,7 +66,8 @@ public class ClientController {
             clientService.updateClient(client);
             Client updatedClient = clientService.readClient(clientId);
             return ResponseEntity.ok(updatedClient);
-        } else {
+        } 
+		else {
             return ResponseEntity.badRequest().body(errors);
         }
     }

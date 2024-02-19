@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Router} from "@angular/router";
 import axios from 'axios';
-import {Person} from "./person";
+import {Person} from "../person";
 
 @Injectable({
   providedIn: 'root'
@@ -14,11 +14,9 @@ export class PersonService {
     private router: Router
   ) { }
 
-  async listPeople(queryParams?: { [key: string]: any }): Promise<Person[]> {
+  async listPeople(): Promise<Person[]> {
     try {
-      const queryString = new URLSearchParams(queryParams).toString();
-      const url = `${this.personEndpoint}${queryString ? '?' + queryString : ''}`;
-      const response = await axios.get<Person[]>(url);
+      const response = await axios.get<Person[]>(this.personEndpoint);
       return response.data;
     }
     catch (error) {
@@ -41,7 +39,7 @@ export class PersonService {
 
   deletePerson(personId: number) {
     const url = this.personEndpoint + "/" + personId;
-    axios.delete(url)
+    return axios.delete(url)
       .then(response => {
         if (response.status == 200) {
           console.log('Person deleted: ', response.data);
@@ -52,6 +50,7 @@ export class PersonService {
       })
       .catch(error => {
         console.error('Error deleting person: ', error);
+        throw error;
       });
   }
 
@@ -89,9 +88,13 @@ export class PersonService {
       });
   }
 
-  navigateToEditPerson(personId?: number) {
-    const path = personId ? ['/person',personId] : ['/person/new'];
-    this.router.navigate(path);
+  navigateToEditPerson(person?: Person) {
+    if (person) {
+      this.router.navigate(['/person',person.personId], {state: {person: person}});
+    }
+    else {
+      this.router.navigate(['/person/new']);
+    }
   }
 
   navigateToListPeople() {

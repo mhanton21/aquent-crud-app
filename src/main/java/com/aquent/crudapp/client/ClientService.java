@@ -1,8 +1,8 @@
 package com.aquent.crudapp.client;
 
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 /**
  * Client operations.

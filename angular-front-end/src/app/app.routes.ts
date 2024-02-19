@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import {PersonListComponent} from "./person-list/person-list.component";
-import {PersonEditComponent} from "./person-edit/person-edit.component";
-import {ClientListComponent} from "./client-list/client-list.component";
-import {ClientEditComponent} from "./client-edit/client-edit.component";
+import {PersonListComponent} from "./person/person-list/person-list.component";
+import {PersonEditComponent} from "./person/person-edit/person-edit.component";
+import {ClientListComponent} from "./client/client-list/client-list.component";
+import {ClientEditComponent} from "./client/client-edit/client-edit.component";
 
 export const routes: Routes = [
   {
@@ -20,5 +20,9 @@ export const routes: Routes = [
   {
     path: 'client/:id',
     component: ClientEditComponent
+  },
+  {
+    path: '**',
+    component: PersonListComponent
   }
 ];

@@ -1,4 +1,9 @@
-<h1>{{title}}</h1>
-<button (click)="navigateToListPeople()">List Persons</button>
-<button (click)="navigateToListClients()">List Clients</button>
-<router-outlet></router-outlet>
+<div class="container-fluid pt-5">
+  <h1 class="text-primary text-center">{{title}}</h1>
+  <div class="row">
+    <button (click)="navigateToListPeople()" class="btn btn-primary col-6">Persons</button>
+    <button (click)="navigateToListClients()" class="btn btn-primary col-6">Clients</button>
+  </div>
+  <br/>
+  <router-outlet></router-outlet>
+</div>
